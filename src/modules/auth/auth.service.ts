@@ -24,7 +24,7 @@ export class AuthService {
     private jwtService: JwtService,
     private configService: ConfigService,
     private firebaseService: FirebaseService,
-  ) {}
+  ) { }
 
   async googleSignup(token: string) {
     try {
@@ -160,6 +160,35 @@ export class AuthService {
       this.logger.error('Refresh token error', error);
       throw new UnauthorizedException('Invalid or expired refresh token');
     }
+  }
+
+  async adminLogin(email: string, password?: string) {
+    if (!email || !email.endsWith('@eventcraft.com')) {
+      throw new BadRequestException('Invalid admin email');
+    }
+    const expectedPassword =
+      this.configService.get<string>('ADMIN_PASSWORD') || 'admin123';
+    if (password !== expectedPassword) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+    console.log("admin login")
+    let user = await this.usersService.findByEmail(email);
+    console.log(user, "user")
+    if (!user) {
+      console.log("going to create")
+      user = await this.usersService.create({
+        email,
+        firstName: 'System',
+        lastName: 'Admin',
+        isActive: true,
+      });
+    }
+
+    return this.generateTokens({
+      id: user.id,
+      email: user.email,
+      phoneNumber: user?.phoneNumber || "",
+    });
   }
 
   private async generateTokens(user: {

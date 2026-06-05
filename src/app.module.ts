@@ -35,10 +35,7 @@ import { AuthModule } from './modules/auth/auth.module';
     ReviewsModule,
     CategoriesModule,
     AuthModule,
-    JwtModule.register({
-      secret: String(configService.get('JWT_ACCESS_TOKEN_SECRET_KEY')),
-      signOptions: { expiresIn: configService.get('JWT_ACCESS_TOKEN_EXPIRY') },
-
+    JwtModule.registerAsync({
       global: true,
       imports: [ConfigModule],
       inject: [ConfigService],

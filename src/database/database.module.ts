@@ -15,6 +15,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         database: configService.get<string>('database.database'),
         autoLoadModels: true,
         synchronize: true, // Used for dev environment
+        sync: {
+          alter: true,
+        },
+        logging: process.env.NODE_ENV === 'test' ? false : console.log,
         ssl: true,
         dialectOptions: {
           ssl: {
@@ -31,4 +35,4 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     }),
   ],
 })
-export class DatabaseModule {}
+export class DatabaseModule { }

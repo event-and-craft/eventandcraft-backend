@@ -3,6 +3,7 @@ import { BaseModel } from '../../../common/models/base.model';
 
 @Table({
   tableName: 'users',
+  underscored: true,
 })
 export class User extends BaseModel<User> {
   @Column({

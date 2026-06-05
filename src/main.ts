@@ -4,19 +4,27 @@ import compression from 'compression';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import dotenv from 'dotenv';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
 
 dotenv.config();
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   app.useGlobalFilters(new GlobalExceptionFilter());
-  app.setGlobalPrefix('api');
+  app.setGlobalPrefix('api', {
+    exclude: ['admin/*', 'admin'],
+  });
   app.enableCors({
     origin: '*',
     credentials: true,
   });
 
   app.use(compression());
+
+  app.useStaticAssets(join(__dirname, '..', 'admin', 'dist'), {
+    prefix: '/admin',
+  });
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('EventCraft API Documentation')

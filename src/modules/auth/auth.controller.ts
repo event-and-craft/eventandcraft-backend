@@ -28,4 +28,13 @@ export class AuthController {
   async refreshTokens(@Body('refreshToken') refreshToken: string) {
     return this.authService.refreshTokens(refreshToken);
   }
+
+  @Post('admin-login')
+  @HttpCode(HttpStatus.OK)
+  async adminLogin(
+    @Body('email') email: string,
+    @Body('password') password?: string,
+  ) {
+    return this.authService.adminLogin(email, password);
+  }
 }

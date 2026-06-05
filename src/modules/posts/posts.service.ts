@@ -55,10 +55,11 @@ export class PostsService {
     id: string,
     userId: string,
     updatePostStatusDto: UpdatePostStatusDto,
+    userEmail?: string,
   ) {
     const post = await this.findOne(id);
 
-    if (post.creatorId !== userId) {
+    if (post.creatorId !== userId && !userEmail?.endsWith('@eventcraft.com')) {
       throw new ForbiddenException('You can only update your own posts');
     }
 
@@ -66,10 +67,10 @@ export class PostsService {
     return post;
   }
 
-  async remove(id: string, userId: string) {
+  async remove(id: string, userId: string, userEmail?: string) {
     const post = await this.findOne(id);
 
-    if (post.creatorId !== userId) {
+    if (post.creatorId !== userId && !userEmail?.endsWith('@eventcraft.com')) {
       throw new ForbiddenException('You can only delete your own posts');
     }
 
