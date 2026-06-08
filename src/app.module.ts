@@ -8,6 +8,7 @@ import { MailerModule as NodeMailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { DatabaseModule } from './database/database.module';
 import databaseConfig from './config/database.config';
+import redisConfig from './config/redis.config';
 import { UsersModule } from './modules/users/users.module';
 import { FirebaseModule } from './modules/firebase/firebase.module';
 import { StorageModule } from './modules/storage/storage.module';
@@ -17,17 +18,19 @@ import { ReviewsModule } from './modules/reviews/reviews.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { LocationsModule } from './modules/locations/locations.module';
 import { LanguagesModule } from './modules/languages/languages.module';
+import { MediaModule } from './modules/media/media.module';
 import { CmsModule } from './modules/cms/cms.module';
 
 const configService = new ConfigService();
 import { AuthModule } from './modules/auth/auth.module';
+import { BullModule } from '@nestjs/bullmq';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
-      load: [databaseConfig],
+      load: [databaseConfig, redisConfig],
     }),
     DatabaseModule,
     UsersModule,
@@ -39,7 +42,19 @@ import { AuthModule } from './modules/auth/auth.module';
     CategoriesModule,
     LocationsModule,
     LanguagesModule,
+    MediaModule,
     AuthModule,
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        connection: {
+          host: configService.get('redis.host'),
+          port: configService.get('redis.port'),
+          password: configService.get('redis.password'),
+        },
+      }),
+      inject: [ConfigService],
+    }),
     CmsModule,
     JwtModule.registerAsync({
       global: true,
