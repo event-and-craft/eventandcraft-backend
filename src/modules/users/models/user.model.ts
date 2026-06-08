@@ -10,13 +10,32 @@ export class User extends BaseModel<User> {
     type: DataType.STRING,
     allowNull: true,
   })
-  firstName: string;
+  profileImg: string;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
+  priority: number;
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  lastName: string;
+  name: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  username: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+    unique: true,
+  })
+  mobile: string;
 
   @Column({
     type: DataType.STRING,
@@ -28,9 +47,50 @@ export class User extends BaseModel<User> {
   @Column({
     type: DataType.STRING,
     allowNull: true,
-    unique: true,
   })
-  phoneNumber: string;
+  password: string;
+
+  @Column({
+    type: DataType.BOOLEAN,
+    defaultValue: false,
+  })
+  isAdmin: boolean;
+
+  @Column({
+    type: DataType.INTEGER,
+    defaultValue: 1, // 0:admin, 1:user, 2:creator
+  })
+  userType: number;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  authType: string;
+
+  @Column({
+    type: DataType.INTEGER,
+    defaultValue: 0,
+  })
+  optmisticLock: number;
+
+  @Column({
+    type: DataType.STRING,
+    defaultValue: 'active', // active, blocked, pending-verification
+  })
+  status: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  createdBy: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  updatedUBy: string;
 
   @Column({
     type: DataType.STRING,
@@ -44,10 +104,4 @@ export class User extends BaseModel<User> {
     allowNull: true,
   })
   refreshToken: string;
-
-  @Column({
-    type: DataType.BOOLEAN,
-    defaultValue: true,
-  })
-  isActive: boolean;
 }

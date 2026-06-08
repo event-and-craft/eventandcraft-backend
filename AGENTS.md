@@ -4,7 +4,7 @@
 
 - **Framework:** NestJS 11 + TypeScript (NodeNext module resolution)
 - **ORM:** Sequelize 6 with `sequelize-typescript` against PostgreSQL (Neon)
-- **Auth:** JWT (passport-jwt) + Firebase Admin SDK
+- **Auth:** JWT (NestJS @nestjs/jwt) + Firebase Admin SDK
 - **File storage:** Firebase Storage (via `FirebaseStorageService`, exported as `FileStorageService`)
 - **Mail:** `@nestjs-modules/mailer` with Nodemailer + Handlebars templates
 - **Swagger:** `@nestjs/swagger` at `/doc` (configurable via `SWAGGER_DOC_URL` env)
@@ -19,7 +19,7 @@ src/
 ├── common/
 │   ├── decorators/      # @User() param decorator
 │   ├── filters/         # GlobalExceptionFilter
-│   ├── guards/          # AuthGuard (JWT), JwtAuthGuard (passport-based)
+│   ├── guards/          # AuthGuard (JWT), JwtAuthGuard (legacy JWT verify), AdminGuard (admin verification)
 │   ├── models/          # BaseModel (UUID PK, timestamps, soft-delete)
 │   └── utils/
 ├── config/              # NestJS config namespaces: database, firebase
@@ -54,13 +54,14 @@ pnpm run test:cov         # jest --coverage
 ## Key conventions
 
 ### Models
+- The database schema represents the relational entities of the platform (users, creator profiles, service catalogue, posts, categories, etc.). See [SCHEMA.md](file:///home/ajn-ash/Documents/projects/eventandcraft/eventandcraft-backend/SCHEMA.md) for the detailed schema specification and Entity-Relationship (ER) diagram.
 - All models extend `BaseModel` (UUID primary key, `timestamps: true`, `paranoid: true` for soft-delete).
 - Table naming uses `underscored: true` (snake_case columns).
 - DB sync is `synchronize: true` — safe for dev, do **not** enable in production.
 - SSL is **always** enabled (`rejectUnauthorized: false`), matching Neon's requirements.
 
 ### Auth
-- Two guards exist: `AuthGuard` (passport-based via `JwtStrategy`) and `JwtAuthGuard` (manual JWT verify). Prefer `AuthGuard` for new endpoints; `JwtAuthGuard` is legacy.
+- Three guards exist: `AuthGuard` (manually verifies JWT for general users), `JwtAuthGuard` (legacy manual JWT verification, used in `UsersController`), and `AdminGuard` (verifies admin privileges). Prefer `AuthGuard` for new user endpoints.
 - Token expected as `Bearer <token>` in the `Authorization` header.
 - Use `@User()` decorator on controller params to extract `req.user`.
 - JWT secret comes from env `JWT_ACCESS_TOKEN_SECRET_KEY` (required for app to start).

@@ -6,7 +6,9 @@ import { UserList, UserEdit, UserShow } from './resources/users';
 import { CategoryList, CategoryEdit, CategoryCreate, CategoryShow } from './resources/categories';
 import { PostList, PostEdit, PostShow } from './resources/posts';
 import { ReviewList, ReviewEdit, ReviewShow } from './resources/reviews';
-import { Users, FolderTree, FileText, MessageSquare } from 'lucide-react';
+import { LocationList, LocationEdit, LocationCreate, LocationShow } from './resources/locations';
+import { LanguageList, LanguageEdit, LanguageCreate, LanguageShow } from './resources/languages';
+import { Users, FolderTree, FileText, MessageSquare, MapPin, Globe } from 'lucide-react';
 
 const App = () => (
   <Admin
@@ -45,6 +47,24 @@ const App = () => (
       show={ReviewShow}
       icon={MessageSquare}
       options={{ label: 'Reviews' }}
+    />
+    <Resource
+      name="locations"
+      list={LocationList}
+      edit={LocationEdit}
+      create={LocationCreate}
+      show={LocationShow}
+      icon={MapPin}
+      options={{ label: 'Locations' }}
+    />
+    <Resource
+      name="languages"
+      list={LanguageList}
+      edit={LanguageEdit}
+      create={LanguageCreate}
+      show={LanguageShow}
+      icon={Globe}
+      options={{ label: 'Languages' }}
     />
   </Admin>
 );

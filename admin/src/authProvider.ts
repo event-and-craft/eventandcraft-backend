@@ -15,6 +15,7 @@ export const authProvider: AuthProvider = {
     }
 
     const data = await response.json();
+    console.log({ data })
     localStorage.setItem('admin_token', data.accessToken);
     localStorage.setItem('admin_user', JSON.stringify(data.user));
     return Promise.resolve();

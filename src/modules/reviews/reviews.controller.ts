@@ -59,14 +59,22 @@ export class ReviewsController {
     @User() user: { sub: string; email?: string },
     @Body() updateReviewDto: UpdateReviewDto,
   ) {
-    return this.reviewsService.update(id, user.sub, updateReviewDto, user.email);
+    return this.reviewsService.update(
+      id,
+      user.sub,
+      updateReviewDto,
+      user.email,
+    );
   }
 
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Delete your review' })
   @Delete(':id')
-  remove(@Param('id') id: string, @User() user: { sub: string; email?: string }) {
+  remove(
+    @Param('id') id: string,
+    @User() user: { sub: string; email?: string },
+  ) {
     return this.reviewsService.remove(id, user.sub, user.email);
   }
 }

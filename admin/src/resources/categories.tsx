@@ -21,6 +21,8 @@ export const CategoryList = () => (
       <DataTable.Col source="name" label="Category Name" />
       <DataTable.Col source="icon" label="Icon Class" />
       <DataTable.Col source="parentId" label="Parent ID" />
+      <DataTable.Col source="isParent" label="Is Parent" />
+      <DataTable.Col source="description" label="Description" />
       <DataTable.Col source="createdAt" label="Created At" />
     </DataTable>
   </List>
@@ -34,6 +36,15 @@ export const CategoryEdit = () => (
       <ReferenceInput source="parentId" reference="categories">
         <SelectInput optionText="name" label="Parent Category" />
       </ReferenceInput>
+      <SelectInput
+        source="isParent"
+        label="Is Parent Category?"
+        choices={[
+          { id: 'true', name: 'Yes' },
+          { id: 'false', name: 'No' },
+        ]}
+      />
+      <TextInput source="description" label="Description" multiline rows={3} />
     </SimpleForm>
   </Edit>
 );
@@ -46,6 +57,15 @@ export const CategoryCreate = () => (
       <ReferenceInput source="parentId" reference="categories">
         <SelectInput optionText="name" label="Parent Category" />
       </ReferenceInput>
+      <SelectInput
+        source="isParent"
+        label="Is Parent Category?"
+        choices={[
+          { id: 'true', name: 'Yes' },
+          { id: 'false', name: 'No' },
+        ]}
+      />
+      <TextInput source="description" label="Description" multiline rows={3} />
     </SimpleForm>
   </Create>
 );
@@ -59,6 +79,8 @@ export const CategoryShow = () => (
       <ReferenceField source="parentId" reference="categories">
         <TextField source="name" label="Parent Category" />
       </ReferenceField>
+      <TextField source="isParent" label="Is Parent" />
+      <TextField source="description" label="Description" />
       <DateField source="createdAt" label="Created At" showTime />
       <DateField source="updatedAt" label="Updated At" showTime />
     </SimpleShowLayout>

@@ -14,6 +14,7 @@ const fetchWithAuth = async (url: string, options: any = {}) => {
   const response = await fetch(url, { ...options, headers });
   if (response.status === 401 || response.status === 403) {
     localStorage.removeItem('admin_token');
+    localStorage.removeItem('admin_user');
     throw new Error('Unauthorized');
   }
   if (!response.ok) {
@@ -109,7 +110,7 @@ export const dataProvider: DataProvider = {
     let method = 'PUT';
 
     // Handle custom patch requests on categories and posts
-    if (resource === 'categories' || resource === 'reviews') {
+    if (resource === 'categories' || resource === 'reviews' || resource === 'locations' || resource === 'languages') {
       method = 'PATCH';
     }
 
