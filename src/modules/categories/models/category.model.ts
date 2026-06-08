@@ -38,4 +38,17 @@ export class Category extends BaseModel<Category> {
     allowNull: true,
   })
   icon: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+    field: 'is_parent',
+  })
+  isParent: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  description: string;
 }

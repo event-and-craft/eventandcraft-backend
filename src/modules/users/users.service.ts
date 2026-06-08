@@ -13,12 +13,14 @@ export class UsersService {
   async findAll(filters?: Partial<User>): Promise<User[]> {
     const where: WhereOptions<User> = {};
     if (filters) {
-      if (filters.firstName) where.firstName = filters.firstName;
-      if (filters.lastName) where.lastName = filters.lastName;
+      if (filters.name) where.name = filters.name;
+      if (filters.username) where.username = filters.username;
       if (filters.email) where.email = filters.email;
-      if (filters.phoneNumber) where.phoneNumber = filters.phoneNumber;
+      if (filters.mobile) where.mobile = filters.mobile;
       if (filters.firebaseUid) where.firebaseUid = filters.firebaseUid;
-      if (filters.isActive !== undefined) where.isActive = filters.isActive;
+      if (filters.status) where.status = filters.status;
+      if (filters.isAdmin !== undefined) where.isAdmin = filters.isAdmin;
+      if (filters.userType !== undefined) where.userType = filters.userType;
     }
     return this.userModel.findAll({ where });
   }
@@ -32,7 +34,11 @@ export class UsersService {
   }
 
   async findByPhoneNumber(phoneNumber: string): Promise<User | null> {
-    return this.userModel.findOne({ where: { phoneNumber } });
+    return this.userModel.findOne({ where: { mobile: phoneNumber } });
+  }
+
+  async findByMobile(mobile: string): Promise<User | null> {
+    return this.userModel.findOne({ where: { mobile } });
   }
 
   async findByFirebaseUid(firebaseUid: string): Promise<User | null> {

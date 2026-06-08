@@ -32,6 +32,12 @@ export class ReviewsController {
     return this.reviewsService.create(user.sub, createReviewDto);
   }
 
+  @ApiOperation({ summary: 'List all reviews' })
+  @Get()
+  findAll() {
+    return this.reviewsService.findAll();
+  }
+
   @ApiOperation({ summary: 'List all reviews for a specific creator' })
   @Get('creator/:creatorId')
   findAllByCreator(@Param('creatorId') creatorId: string) {
@@ -50,17 +56,25 @@ export class ReviewsController {
   @Patch(':id')
   update(
     @Param('id') id: string,
-    @User() user: { sub: string },
+    @User() user: { sub: string; email?: string },
     @Body() updateReviewDto: UpdateReviewDto,
   ) {
-    return this.reviewsService.update(id, user.sub, updateReviewDto);
+    return this.reviewsService.update(
+      id,
+      user.sub,
+      updateReviewDto,
+      user.email,
+    );
   }
 
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Delete your review' })
   @Delete(':id')
-  remove(@Param('id') id: string, @User() user: { sub: string }) {
-    return this.reviewsService.remove(id, user.sub);
+  remove(
+    @Param('id') id: string,
+    @User() user: { sub: string; email?: string },
+  ) {
+    return this.reviewsService.remove(id, user.sub, user.email);
   }
 }

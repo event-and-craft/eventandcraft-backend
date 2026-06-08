@@ -8,6 +8,7 @@ import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { FirebaseService } from '../firebase/firebase.service';
+import { verifyPassword } from '../../common/utils/crypto';
 
 interface TokenPayload {
   sub?: string;
@@ -44,19 +45,13 @@ export class AuthService {
         if (user) {
           user = await this.usersService.update(user.id, { firebaseUid: uid });
         } else {
-          // Extract firstName and lastName from name
-          const nameString: string = name || '';
-          const nameParts: string[] = nameString ? nameString.split(' ') : [];
-          const firstName: string =
-            nameParts.length > 0 ? String(nameParts[0]) : '';
-          const lastName: string =
-            nameParts.length > 1 ? String(nameParts.slice(1).join(' ')) : '';
-
           user = await this.usersService.create({
             firebaseUid: uid,
             email,
-            firstName,
-            lastName,
+            name: name || '',
+            authType: 'Oauth-google',
+            userType: 1,
+            status: 'active',
           });
         }
       }
@@ -68,7 +63,10 @@ export class AuthService {
       return this.generateTokens({
         id: user.id,
         email: user.email,
-        phoneNumber: user.phoneNumber,
+        mobile: user.mobile,
+        isAdmin: user.isAdmin,
+        userType: user.userType,
+        authType: user.authType,
       });
     } catch (error: unknown) {
       this.logger.error('Google signup error', error);
@@ -110,7 +108,10 @@ export class AuthService {
         } else {
           user = await this.usersService.create({
             firebaseUid: uid,
-            phoneNumber: phone_number,
+            mobile: phone_number,
+            authType: 'Oauth-phone',
+            userType: 1,
+            status: 'active',
           });
         }
       }
@@ -122,7 +123,10 @@ export class AuthService {
       return this.generateTokens({
         id: user.id,
         email: user.email,
-        phoneNumber: user.phoneNumber,
+        mobile: user.mobile,
+        isAdmin: user.isAdmin,
+        userType: user.userType,
+        authType: user.authType,
       });
     } catch (error: unknown) {
       this.logger.error('Phone signup verify error', error);
@@ -154,7 +158,10 @@ export class AuthService {
       return this.generateTokens({
         id: user.id,
         email: user.email,
-        phoneNumber: user.phoneNumber,
+        mobile: user.mobile,
+        isAdmin: user.isAdmin,
+        userType: user.userType,
+        authType: user.authType,
       });
     } catch (error: unknown) {
       this.logger.error('Refresh token error', error);
@@ -162,15 +169,51 @@ export class AuthService {
     }
   }
 
+  async adminLogin(email: string, password?: string) {
+    console.log('admin login');
+    const user = (await this.usersService.findByEmail(email))?.dataValues;
+    console.log(user, 'user');
+    if (!user || !user.isAdmin || user.userType !== 0) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const expectedPassword =
+      this.configService.get<string>('ADMIN_PASSWORD') || 'admin123';
+
+    const isDbPasswordValid = user.password
+      ? verifyPassword(password || '', user.password)
+      : false;
+    const isEnvPasswordValid = password === expectedPassword;
+
+    if (!isDbPasswordValid && !isEnvPasswordValid) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    return this.generateTokens({
+      id: user.id,
+      email: user.email,
+      mobile: user.mobile || '',
+      isAdmin: user.isAdmin,
+      userType: user.userType,
+      authType: user.authType,
+    });
+  }
+
   private async generateTokens(user: {
     id: string;
     email?: string;
-    phoneNumber?: string;
+    mobile?: string;
+    isAdmin: boolean;
+    userType: number;
+    authType?: string;
   }) {
     const payload = {
       sub: user.id,
       email: user.email,
-      phoneNumber: user.phoneNumber,
+      mobile: user.mobile,
+      isAdmin: user.isAdmin,
+      userType: user.userType,
+      authType: user.authType,
     };
 
     // Use string type for signOptions compatible with @nestjs/jwt

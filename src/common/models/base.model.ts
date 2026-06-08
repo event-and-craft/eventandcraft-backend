@@ -3,6 +3,7 @@ import { Column, DataType, Model, Table } from 'sequelize-typescript';
 @Table({
   timestamps: true,
   paranoid: true, // Enables soft deletion (deletedAt)
+  underscored: true,
 })
 export class BaseModel<
   T extends object = object,

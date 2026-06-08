@@ -45,7 +45,9 @@ export class SocialService {
   async getLikes(postId: string) {
     return this.likeModel.findAll({
       where: { postId },
-      include: [{ model: User, attributes: ['id', 'firstName', 'lastName'] }],
+      include: [
+        { model: User, attributes: ['id', 'name', 'username', 'profileImg'] },
+      ],
     });
   }
 
@@ -86,7 +88,9 @@ export class SocialService {
   async getComments(postId: string) {
     return this.commentModel.findAll({
       where: { postId },
-      include: [{ model: User, attributes: ['id', 'firstName', 'lastName'] }],
+      include: [
+        { model: User, attributes: ['id', 'name', 'username', 'profileImg'] },
+      ],
       order: [['createdAt', 'DESC']],
     });
   }
@@ -120,7 +124,7 @@ export class SocialService {
         {
           model: User,
           as: 'follower',
-          attributes: ['id', 'firstName', 'lastName'],
+          attributes: ['id', 'name', 'username', 'profileImg'],
         },
       ],
     });
@@ -134,7 +138,7 @@ export class SocialService {
         {
           model: User,
           as: 'following',
-          attributes: ['id', 'firstName', 'lastName'],
+          attributes: ['id', 'name', 'username', 'profileImg'],
         },
       ],
     });

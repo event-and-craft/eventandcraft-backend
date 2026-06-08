@@ -60,17 +60,25 @@ export class PostsController {
   @Patch(':id/status')
   updateStatus(
     @Param('id') id: string,
-    @User() user: { sub: string },
+    @User() user: { sub: string; email?: string },
     @Body() updatePostStatusDto: UpdatePostStatusDto,
   ) {
-    return this.postsService.updateStatus(id, user.sub, updatePostStatusDto);
+    return this.postsService.updateStatus(
+      id,
+      user.sub,
+      updatePostStatusDto,
+      user.email,
+    );
   }
 
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Delete a post' })
   @Delete(':id')
-  remove(@Param('id') id: string, @User() user: { sub: string }) {
-    return this.postsService.remove(id, user.sub);
+  remove(
+    @Param('id') id: string,
+    @User() user: { sub: string; email?: string },
+  ) {
+    return this.postsService.remove(id, user.sub, user.email);
   }
 }

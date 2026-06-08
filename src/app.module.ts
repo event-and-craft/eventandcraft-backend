@@ -15,6 +15,8 @@ import { PostsModule } from './modules/posts/posts.module';
 import { SocialModule } from './modules/social/social.module';
 import { ReviewsModule } from './modules/reviews/reviews.module';
 import { CategoriesModule } from './modules/categories/categories.module';
+import { LocationsModule } from './modules/locations/locations.module';
+import { LanguagesModule } from './modules/languages/languages.module';
 
 const configService = new ConfigService();
 import { AuthModule } from './modules/auth/auth.module';
@@ -34,11 +36,10 @@ import { AuthModule } from './modules/auth/auth.module';
     SocialModule,
     ReviewsModule,
     CategoriesModule,
+    LocationsModule,
+    LanguagesModule,
     AuthModule,
-    JwtModule.register({
-      secret: String(configService.get('JWT_ACCESS_TOKEN_SECRET_KEY')),
-      signOptions: { expiresIn: configService.get('JWT_ACCESS_TOKEN_EXPIRY') },
-
+    JwtModule.registerAsync({
       global: true,
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -79,4 +80,4 @@ import { AuthModule } from './modules/auth/auth.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}

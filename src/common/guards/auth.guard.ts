@@ -13,12 +13,14 @@ export class AuthGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
     private configService: ConfigService,
-  ) {}
+  ) { }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
     const token = this.extractTokenFromHeader(request);
+    console.log({ token });
     if (!token) {
+      console.log('token  failed');
       throw new UnauthorizedException();
     }
     try {
@@ -29,6 +31,7 @@ export class AuthGuard implements CanActivate {
       // so that we can access it in our route handlers
       request['user'] = payload;
     } catch {
+      console.log('token verification failed');
       throw new UnauthorizedException();
     }
     return true;

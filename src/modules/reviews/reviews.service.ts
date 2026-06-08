@@ -24,6 +24,12 @@ export class ReviewsService {
     });
   }
 
+  async findAll() {
+    return this.reviewModel.findAll({
+      order: [['createdAt', 'DESC']],
+    });
+  }
+
   async findAllByCreator(creatorId: string) {
     return this.reviewModel.findAll({
       where: { creatorId },
@@ -39,10 +45,15 @@ export class ReviewsService {
     return review;
   }
 
-  async update(id: string, buyerId: string, updateReviewDto: UpdateReviewDto) {
+  async update(
+    id: string,
+    buyerId: string,
+    updateReviewDto: UpdateReviewDto,
+    userEmail?: string,
+  ) {
     const review = await this.findOne(id);
 
-    if (review.buyerId !== buyerId) {
+    if (review.buyerId !== buyerId && !userEmail?.endsWith('@eventcraft.com')) {
       throw new ForbiddenException('You can only update your own reviews');
     }
 
@@ -50,10 +61,10 @@ export class ReviewsService {
     return review;
   }
 
-  async remove(id: string, buyerId: string) {
+  async remove(id: string, buyerId: string, userEmail?: string) {
     const review = await this.findOne(id);
 
-    if (review.buyerId !== buyerId) {
+    if (review.buyerId !== buyerId && !userEmail?.endsWith('@eventcraft.com')) {
       throw new ForbiddenException('You can only delete your own reviews');
     }
 
