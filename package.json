@@ -22,6 +22,7 @@
     "seed-cms": "ts-node -r tsconfig-paths/register src/scripts/seed-cms.ts"
   },
   "dependencies": {
+    "@google-cloud/storage": "^7.19.0",
     "@nestjs-modules/mailer": "^2.0.2",
     "@nestjs/bullmq": "^11.0.4",
     "@nestjs/common": "^11.0.1",
