@@ -26,4 +26,15 @@ export abstract class FileStorageService {
    * @param fileName - File name to retrieve url
    */
   abstract getSignedUrl(fileName: string): Promise<string>;
+
+  /**
+   * Retrieves a signed URL to upload a file (action: 'write')
+   * @param fileName - Original name of the file
+   * @param mimetype - MIME type of the file
+   * @returns An object containing the upload signed URL and the final public URL
+   */
+  abstract getUploadPresignedUrl(
+    fileName: string,
+    mimetype: string,
+  ): Promise<{ uploadUrl: string; fileUrl: string }>;
 }

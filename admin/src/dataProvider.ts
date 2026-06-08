@@ -36,6 +36,50 @@ const flattenCategories = (categories: any[]): any[] => {
   return flat;
 };
 
+const uploadProfileImage = async (profileImg: any) => {
+  if (profileImg && typeof profileImg === 'object' && profileImg.rawFile) {
+    const fileObj = profileImg.rawFile;
+    const token = localStorage.getItem('admin_token');
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    const response = await fetch(`${apiUrl}/user/presigned-url`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        fileName: fileObj.name,
+        fileType: fileObj.type,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || 'Failed to get presigned upload URL');
+    }
+
+    const { uploadUrl, fileUrl } = await response.json();
+
+    const uploadResponse = await fetch(uploadUrl, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': fileObj.type,
+      },
+      body: fileObj,
+    });
+
+    if (!uploadResponse.ok) {
+      throw new Error('Failed to upload file to storage');
+    }
+
+    return fileUrl;
+  }
+  return profileImg;
+};
+
 export const dataProvider: DataProvider = {
   getList: async (resource, params) => {
     let url = `${apiUrl}/${resource === 'users' ? 'user' : resource}`;
@@ -114,7 +158,11 @@ export const dataProvider: DataProvider = {
       method = 'PATCH';
     }
 
-    let bodyData = params.data;
+    let bodyData = { ...params.data };
+    if (resource === 'users' && bodyData.profileImg) {
+      bodyData.profileImg = await uploadProfileImage(bodyData.profileImg);
+    }
+
     if (resource === 'posts') {
       url = `${apiUrl}/posts/${params.id}/status`;
       method = 'PATCH';
@@ -126,7 +174,7 @@ export const dataProvider: DataProvider = {
       body: JSON.stringify(bodyData),
     });
 
-    return { data: { ...params.data, ...data } };
+    return { data: { ...params.data, ...data, ...bodyData } };
   },
 
   updateMany: async (resource, params) => {
@@ -140,9 +188,13 @@ export const dataProvider: DataProvider = {
 
   create: async (resource, params) => {
     const resourcePath = resource === 'users' ? 'user' : resource;
+    let bodyData = { ...params.data };
+    if (resource === 'users' && bodyData.profileImg) {
+      bodyData.profileImg = await uploadProfileImage(bodyData.profileImg);
+    }
     const data = await fetchWithAuth(`${apiUrl}/${resourcePath}`, {
       method: 'POST',
-      body: JSON.stringify(params.data),
+      body: JSON.stringify(bodyData),
     });
     return { data };
   },

@@ -17,6 +17,7 @@ import { ReviewsModule } from './modules/reviews/reviews.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { LocationsModule } from './modules/locations/locations.module';
 import { LanguagesModule } from './modules/languages/languages.module';
+import { CmsModule } from './modules/cms/cms.module';
 
 const configService = new ConfigService();
 import { AuthModule } from './modules/auth/auth.module';
@@ -39,6 +40,7 @@ import { AuthModule } from './modules/auth/auth.module';
     LocationsModule,
     LanguagesModule,
     AuthModule,
+    CmsModule,
     JwtModule.registerAsync({
       global: true,
       imports: [ConfigModule],

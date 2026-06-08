@@ -2,13 +2,14 @@ import { Resource } from 'react-admin';
 import { Admin } from '@/components/admin';
 import { dataProvider } from './dataProvider';
 import { authProvider } from './authProvider';
-import { UserList, UserEdit, UserShow } from './resources/users';
+import { UserList, UserEdit, UserCreate, UserShow } from './resources/users';
 import { CategoryList, CategoryEdit, CategoryCreate, CategoryShow } from './resources/categories';
 import { PostList, PostEdit, PostShow } from './resources/posts';
 import { ReviewList, ReviewEdit, ReviewShow } from './resources/reviews';
 import { LocationList, LocationEdit, LocationCreate, LocationShow } from './resources/locations';
 import { LanguageList, LanguageEdit, LanguageCreate, LanguageShow } from './resources/languages';
-import { Users, FolderTree, FileText, MessageSquare, MapPin, Globe } from 'lucide-react';
+import { CmsList, CmsEdit } from './resources/cms';
+import { Users, FolderTree, FileText, MessageSquare, MapPin, Globe, Sliders } from 'lucide-react';
 
 const App = () => (
   <Admin
@@ -19,6 +20,7 @@ const App = () => (
       name="users"
       list={UserList}
       edit={UserEdit}
+      create={UserCreate}
       show={UserShow}
       icon={Users}
       options={{ label: 'Users' }}
@@ -65,6 +67,13 @@ const App = () => (
       show={LanguageShow}
       icon={Globe}
       options={{ label: 'Languages' }}
+    />
+    <Resource
+      name="cms"
+      list={CmsList}
+      edit={CmsEdit}
+      icon={Sliders}
+      options={{ label: 'CMS Settings' }}
     />
   </Admin>
 );

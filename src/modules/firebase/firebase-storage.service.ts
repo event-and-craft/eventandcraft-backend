@@ -133,4 +133,40 @@ export class FirebaseStorageService implements FileStorageService {
       throw new InternalServerErrorException('Could not generate signed URL');
     }
   }
+
+  async getUploadPresignedUrl(
+    fileName: string,
+    mimetype: string,
+  ): Promise<{ uploadUrl: string; fileUrl: string }> {
+    try {
+      const storage = this.firebaseService.getStorage();
+      const bucketName = this.configService.get<string>(
+        'firebase.storageBucket',
+      );
+
+      if (!bucketName) {
+        throw new InternalServerErrorException(
+          'Storage bucket configuration is missing',
+        );
+      }
+
+      const bucket = storage.bucket(bucketName);
+      const uniqueFileName = `${Date.now()}-${fileName}`;
+      const file = bucket.file(uniqueFileName);
+
+      const [uploadUrl] = await file.getSignedUrl({
+        action: 'write',
+        version: 'v4',
+        expires: Date.now() + 15 * 60 * 1000, // Valid for 15 minutes
+        contentType: mimetype,
+      });
+
+      const fileUrl = `https://storage.googleapis.com/${bucketName}/${uniqueFileName}`;
+
+      return { uploadUrl, fileUrl };
+    } catch (error) {
+      this.logger.error(`Error generating upload signed URL for ${fileName}`, error);
+      throw new InternalServerErrorException('Could not generate upload signed URL');
+    }
+  }
 }
