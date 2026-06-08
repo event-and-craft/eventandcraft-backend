@@ -87,17 +87,17 @@ export class UsersController {
     return this.usersService.create(data);
   }
 
-  @UseGuards(AdminGuard)
-  @Post('presigned-url')
-  async getPresignedUrl(
-    @Body('fileName') fileName: string,
-    @Body('fileType') fileType: string,
-  ) {
-    if (!fileName || !fileType) {
-      throw new BadRequestException('fileName and fileType are required');
-    }
-    return this.fileStorageService.getUploadPresignedUrl(fileName, fileType);
-  }
+  // @UseGuards(AdminGuard)
+  // @Post('presigned-url')
+  // async getPresignedUrl(
+  //   @Body('fileName') fileName: string,
+  //   @Body('fileType') fileType: string,
+  // ) {
+  //   if (!fileName || !fileType) {
+  //     throw new BadRequestException('fileName and fileType are required');
+  //   }
+  //   return this.fileStorageService.getUploadPresignedUrl(fileName, fileType);
+  // }
 
   @UseGuards(AdminGuard)
   @Put(':id')
