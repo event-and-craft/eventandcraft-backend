@@ -1,15 +1,15 @@
 import { Module, Global } from '@nestjs/common';
-import { FirebaseModule } from '../firebase/firebase.module';
-import { FirebaseStorageService } from '../firebase/firebase-storage.service';
+import { GcsModule } from '../gcs/gcs.module';
+import { GcsStorageService } from '../gcs/gcs-storage.service';
 import { FileStorageService } from './storage.service';
 
 @Global()
 @Module({
-  imports: [FirebaseModule],
+  imports: [GcsModule],
   providers: [
     {
       provide: FileStorageService,
-      useExisting: FirebaseStorageService,
+      useExisting: GcsStorageService,
     },
   ],
   exports: [FileStorageService],
