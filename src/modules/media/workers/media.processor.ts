@@ -7,7 +7,7 @@ import { MediaVariant, VariantType } from '../models/media-variant.model';
 import { SecurityScanResult } from '../models/security-scan-result.model';
 import { MediaService } from '../media.service';
 import { ConfigService } from '@nestjs/config';
-import * as sharp from 'sharp';
+import sharp from 'sharp';
 import { filetypemime } from 'magic-bytes.js';
 import * as fs from 'fs';
 import * as path from 'path';
